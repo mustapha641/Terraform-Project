@@ -19,11 +19,11 @@ Table of Contents
 
 ## Project Overview
 
-This repository contains Terraform configuration and supporting files to demonstrate and manage cloud infrastructure using IaC principles. The goal is to provide reusable examples and best-practice patterns for provisioning resources.
+This repository contains Terraform configuration and supporting files to demonstrate and manage cloud infrastructure using IaC principles. The goal is to provide reusable examples and best-practice patterns for managing infrastructure as code.
 
 ## What is Terraform?
 
-Terraform is an open-source Infrastructure as Code (IaC) tool that enables engineers to define, provision, and manage cloud and on-prem resources using declarative configuration files. Rather than performing manual actions through cloud consoles, Terraform codifies infrastructure so it can be versioned, reviewed, and automated.
+Terraform is an open-source Infrastructure as Code (IaC) tool that enables engineers to define, provision, and manage cloud and on-prem resources using declarative configuration files. Rather than performing manual steps or writing imperative scripts, you describe your desired infrastructure state in HCL (HashiCorp Configuration Language), and Terraform orchestrates the necessary API calls to reach that state.
 
 ### Terraform Core
 
@@ -41,13 +41,15 @@ Core orchestrates the workflow but delegates provider-specific actions to provid
 
 Because Terraform Core is decoupled from providers, anyone can author providers that interact with services offering a public API.
 
+![Terraform Architecture](images/terraform-architecture.png.png)
+
 ### Resource Dependency Graph
 
-Terraform builds a dependency graph to ensure resources are created, updated, or destroyed in the correct order. For example, a Virtual Private Cloud (VPC) must exist before launching instances into it.
+Terraform builds a dependency graph to ensure resources are created, updated, or destroyed in the correct order. For example, a Virtual Private Cloud (VPC) must exist before launching instances into it. This graph allows Terraform to parallelize independent operations, improving performance.
 
 ### State File (.tfstate)
 
-Terraform maintains a state file (by default `terraform.tfstate`) to track remote resources and map them to local configuration. The state file is essential for planning and applying changes; it should be stored securely and, for team environments, using remote state backends (e.g., S3, GCS, Azure Storage, or Terraform Cloud).
+Terraform maintains a state file (by default `terraform.tfstate`) to track remote resources and map them to local configuration. The state file is essential for planning and applying changes; it should be stored securely and shared across teams using remote backends (e.g., AWS S3, Terraform Cloud).
 
 ## Repository Structure
 
@@ -71,19 +73,27 @@ Adjust the structure to match the contents of this repository.
 ### Quickstart
 1. Initialize the working directory:
 
+   ```bash
    terraform init
+   ```
 
 2. Review the execution plan:
 
+   ```bash
    terraform plan
+   ```
 
 3. Apply the changes:
 
+   ```bash
    terraform apply
+   ```
 
 4. When finished, destroy resources (careful: this deletes real infrastructure):
 
+   ```bash
    terraform destroy
+   ```
 
 Always review `terraform plan` output before applying.
 
