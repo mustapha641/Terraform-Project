@@ -22,3 +22,4 @@ Building the Resource Dependency Graph. It figures out the correct chronological
 
 Managing the State File (.tfstate). It compares your current local code against the reality of what is actually deployed.
 
+
