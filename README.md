@@ -18,5 +18,7 @@ Terraform Core does not inherently know how an AWS EC2 instance, a Google Cloud 
 •	Extensibility: Because of this decoupled layout, anyone can write a provider for any service that features a public API.
 
 Building the Resource Dependency Graph. It figures out the correct chronological order to create, update, or destroy resources (e.g., ensuring a Virtual Private Cloud (VPC) exists before trying to launch a virtual machine inside it).
+
+
 Managing the State File (.tfstate). It compares your current local code against the reality of what is actually deployed.
 
