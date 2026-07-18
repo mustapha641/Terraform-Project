@@ -43,4 +43,19 @@ Terraform Core does not inherently know how an AWS EC2 instance, a Google Cloud 
 
 ![Terraform Architecture](images/terraform-architecture.png.png)
 
+How the Declarative Paradigm Works in Practice
+
+When you write a Terraform configuration file, you are defining a target blueprint:
+
+resource "aws_instance" "web_server" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  count         = 3
+}
+
+If you deploy this code, it calculates dynamically. Terraform sees you want 3 servers, checks your cloud provider, finds 0 servers, and deploys 3.  If you change count = 3 to count = 5 a week later and run it again, an imperative script would blindly run the "create server" command again, accidentally leaving you with 8 servers total. Terraform's declarative engine compares your blueprint (5) to reality (3) and says: "I only need to create exactly 2 more to achieve the desired state."
+Terraform also automatically handles destruction. If you change the instance type from t2.micro to t2.large, you don't write a script to modify the server. You just change the text in your file. Terraform reads the new target state, realizes the existing servers must be upgraded, and handles the API lifecycle loop to swap them out safely.
+Terraform is also self-healing: If an engineer manually logs into the AWS Web Console and deletes one of your three servers, your infrastructure has "drifted." The next time you run terraform plan, Terraform realizes reality (2 servers) no longer matches your declarative code (3 servers). It will automatically recreate the missing server to bring the environment back into alignment.
+In summary, Terraform is declarative because you describe what you want the final infrastructure to look like, not how to build it step by step.
+
 
