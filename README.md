@@ -219,6 +219,11 @@ terraform {
 - ✅ Better security options (encryption at rest and in transit)
 - ✅ Integration with CI/CD pipelines
 
+
+
+![Terraform Architecture](images/terraform-architecture3.png)
+
+
 ---
 
 ## Security Best Practices
