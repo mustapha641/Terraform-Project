@@ -40,14 +40,7 @@ Terraform Core does not inherently know how an AWS EC2 instance, a Google Cloud 
 - **How they work:** When Core decides it needs to create an AWS server, it asks the AWS Provider plugin via an RPC (Remote Procedure Call) interface. The provider translates that request into a concrete API call to AWS.
 - **Extensibility:** Because of this decoupled layout, anyone can write a provider for any service that features a public API.
 
-#### State File (.tfstate)
-
-Building the Resource Dependency Graph. It figures out the correct chronological order to create, update, or destroy resources (e.g., ensuring a Virtual Private Cloud (VPC) exists before trying to launch an EC2 instance within it).
-
-Managing the State File (.tfstate). It compares your current local code against the reality of what is actually deployed.
 
 ![Terraform Architecture](images/terraform-architecture.png.png)
 
-## License
 
-Add a license file to this repository (e.g., `LICENSE` with MIT or another license) if you want to clarify usage rights.
