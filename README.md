@@ -57,5 +57,6 @@ If you deploy this code, it calculates dynamically. Terraform sees you want 3 se
 Terraform also automatically handles destruction. If you change the instance type from t2.micro to t2.large, you don't write a script to modify the server. You just change the text in your file. Terraform reads the new target state, realizes the existing servers must be upgraded, and handles the API lifecycle loop to swap them out safely.
 Terraform is also self-healing: If an engineer manually logs into the AWS Web Console and deletes one of your three servers, your infrastructure has "drifted." The next time you run terraform plan, Terraform realizes reality (2 servers) no longer matches your declarative code (3 servers). It will automatically recreate the missing server to bring the environment back into alignment.
 In summary, Terraform is declarative because you describe what you want the final infrastructure to look like, not how to build it step by step.
+![Terraform Architecture](images/terraform-architecture2.png)
 
 
