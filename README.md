@@ -63,6 +63,10 @@ Terraform Core does not inherently know how an AWS EC2 instance, a Google Cloud 
 - `docker` - Docker containers
 - `postgresql` - PostgreSQL databases
 
+![Terraform Architecture](images/terraform-architecture.png.png)
+
+
+
 ### Declarative Paradigm
 
 When you write a Terraform configuration file, you are defining a target blueprint:
@@ -84,6 +88,14 @@ If you deploy this code, Terraform calculates dynamically:
 Terraform is also self-healing: If an engineer manually logs into the AWS Web Console and deletes one of your three servers, your infrastructure has "drifted." The next time you run `terraform plan`, Terraform detects this and reports the drift.
 
 In summary, Terraform is declarative because you describe what you want the final infrastructure to look like, not how to build it step by step.
+
+
+
+
+![Terraform Architecture](images/terraform-architecture2.png)
+
+
+
 
 ---
 
