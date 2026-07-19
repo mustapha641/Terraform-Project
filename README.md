@@ -646,6 +646,9 @@ terraform state show aws_instance.web_server
 
 Terraform is completely cross-platform and distributed as a single lightweight binary. To write code, we use VS Code, but to actually build infrastructure, we need the underlying CLI engine.
 
+![Terraform Architecture](images/terraform-architecture5.png)
+
+
 ### Manual Windows Installation
 
 **Step 1: File Deployment**
@@ -705,6 +708,10 @@ Command 2: Runs a simulation against your machine's filesystem. It outputs a log
 **3. terraform apply**
 
 Command 3: Executes live modifications. Type yes when prompted. The internal engine compiles the declarative block, instructs the local provider plugin to process the task, and generates the terraform[...]
+
+
+![Terraform Architecture](images/terraform-architecture4.png)
+
 
 ### Summary & Core Takeaways
 
