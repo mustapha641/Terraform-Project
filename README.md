@@ -7,6 +7,7 @@ Table of Contents
 - [What is Terraform?](#what-is-terraform)
   - [Terraform Core](#terraform-core)
   - [Providers & Provisioners](#providers--provisioners)
+  - [Declarative Paradigm](#declarative-paradigm)
 - [State File (.tfstate)](#state-file-tfstate)
   - [What is a Terraform State File?](#what-is-a-terraform-state-file)
   - [Benefits of State Files](#benefits-of-state-files)
@@ -19,10 +20,19 @@ Table of Contents
 - [Repository Structure](#repository-structure)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
   - [Quickstart](#quickstart)
 - [Best Practices](#best-practices)
+- [Common Commands](#common-commands)
+- [Installation Guide](#installation-guide)
+  - [Terraform Installation & First Run](#terraform-installation--first-run)
+  - [Manual Windows Installation](#manual-windows-installation)
+  - [Testing Environment Configuration](#testing-environment-configuration)
+  - [Running the Test Lifecycle Workflow](#running-the-test-lifecycle-workflow)
+  - [Summary & Core Takeaways](#summary--core-takeaways)
 - [Contributing](#contributing)
 - [License](#license)
+- [Additional Resources](#additional-resources)
 
 ## Project Overview
 
@@ -30,11 +40,11 @@ This repository contains Terraform configuration and supporting files to demonst
 
 ## What is Terraform?
 
-Terraform is an open-source Infrastructure as Code (IaC) tool that enables engineers to provision, manage, and automate infrastructure using code rather than manual processes. Developed by HashiCorp, it provides a unified workflow to manage infrastructure lifecycle.
+Terraform is an open-source Infrastructure as Code (IaC) tool that enables engineers to provision, manage, and automate infrastructure using code rather than manual processes. Developed by HashiCorp, Terraform has become the industry standard for IaC.
 
-Before tools like Terraform became popular, cloud infrastructure was often created manually through web consoles. For example, deploying a web application on a cloud platform might involve creating virtual machines, configuring networks, setting up databases, and more—all through point-and-click interfaces. This approach is error-prone, difficult to version control, and challenging to replicate across environments.
+Before tools like Terraform became popular, cloud infrastructure was often created manually through web consoles. For example, deploying a web application on a cloud platform might involve creating VMs, databases, and networks through multiple manual steps.
 
-Terraform by HashiCorp stands as the industry standard for open-source Infrastructure as Code. It provides engineers with the ability to define, provision, and iterate multi-cloud infrastructure safely and efficiently.
+Terraform by HashiCorp stands as the industry standard for open-source Infrastructure as Code. It provides engineers with the ability to define, provision, and iterate multi-cloud infrastructure safely using code.
 
 ### Terraform Core
 
@@ -52,7 +62,7 @@ Terraform Core communicates with cloud provider APIs through a plugin-based arch
 Terraform Core does not inherently know how an AWS EC2 instance, a Google Cloud storage bucket, or a Kubernetes cluster works. Instead, it relies on Providers.
 
 - **What they are:** Providers are executable binaries that act as translation bridges between Terraform Core and target platform APIs.
-- **How they work:** When Core decides it needs to create an AWS server, it asks the AWS Provider plugin via an RPC (Remote Procedure Call) interface. The provider translates that request into actual API calls to AWS.
+- **How they work:** When Core decides it needs to create an AWS server, it asks the AWS Provider plugin via an RPC (Remote Procedure Call) interface. The provider translates that request into actual API calls.
 - **Extensibility:** Because of this decoupled layout, anyone can write a provider for any service that features a public API.
 
 **Common Providers:**
@@ -63,9 +73,7 @@ Terraform Core does not inherently know how an AWS EC2 instance, a Google Cloud 
 - `docker` - Docker containers
 - `postgresql` - PostgreSQL databases
 
-![Terraform Architecture](images/terraform-architecture.png.png)
-
-
+![Terraform Architecture](images/terraform-architecture.png)
 
 ### Declarative Paradigm
 
@@ -85,17 +93,11 @@ If you deploy this code, Terraform calculates dynamically:
 - **On modification:** If you change the instance type from `t2.micro` to `t2.large`, you don't write a script to modify servers. Terraform handles the changes automatically.
 - **On deletion:** If you change `count = 5` to `count = 0`, Terraform destroys all 5 servers.
 
-Terraform is also self-healing: If an engineer manually logs into the AWS Web Console and deletes one of your three servers, your infrastructure has "drifted." The next time you run `terraform plan`, Terraform detects this and reports the drift.
+Terraform is also self-healing: If an engineer manually logs into the AWS Web Console and deletes one of your three servers, your infrastructure has "drifted." The next time you run `terraform plan`, Terraform will detect this and show that it needs to recreate the missing server.
 
 In summary, Terraform is declarative because you describe what you want the final infrastructure to look like, not how to build it step by step.
 
-
-
-
 ![Terraform Architecture](images/terraform-architecture2.png)
-
-
-
 
 ---
 
@@ -219,10 +221,7 @@ terraform {
 - ✅ Better security options (encryption at rest and in transit)
 - ✅ Integration with CI/CD pipelines
 
-
-
 ![Terraform Architecture](images/terraform-architecture3.png)
-
 
 ---
 
@@ -641,6 +640,82 @@ terraform state show aws_instance.web_server
 
 ---
 
+## Installation Guide
+
+### Terraform Installation & First Run
+
+Terraform is completely cross-platform and distributed as a single lightweight binary. To write code, we use VS Code, but to actually build infrastructure, we need the underlying CLI engine.
+
+### Manual Windows Installation
+
+**Step 1: File Deployment**
+
+Go to the official HashiCorp Developer platform. Download the Windows AMD64 ZIP, extract it, and place terraform.exe into a clean dedicated folder like `C:\Terraform`.
+
+**Step 2: Environment Registration**
+
+Search your Windows toolbar for "Environment Variables". Edit the system Path variable and add `C:\Terraform` to the registry array.
+
+**Step 3: Verification**
+
+Launch a completely fresh terminal window (PowerShell or Command Prompt) and test the execution path:
+
+```bash
+terraform -version
+```
+
+If you use a package manager like winget or Homebrew, the environment variables are handled for you automatically. If you choose the manual file method, remembering to append the binary folder location to your system PATH is essential.
+
+### Testing Environment Configuration
+
+Once the terminal acknowledges our binary version, we initialize our project layout. We do this by launching VS Code, opening a blank project workspace directory, and adding a main.tf script file.
+
+Create a file named `main.tf` and paste the following clean provider test layout (this operates completely locally without requiring cloud account credentials or incurring costs):
+
+```hcl
+# 1. Define required provider engines
+terraform {
+  required_providers {
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.0"
+    }
+  }
+}
+
+# 2. Declare a local asset generation task
+resource "local_file" "presentation_test" {
+  filename = "${path.module}/terraform_success.txt"
+  content  = "Terraform CLI execution lifecycle tested successfully on 2026!"
+}
+```
+
+### Running the Test Lifecycle Workflow
+
+Open the integrated VS Code terminal and execute these 3 core sequential commands:
+
+**1. terraform init**
+
+Command 1: Core scans your main.tf code block, maps the local provider block, and pulls down the required plugin binaries directly from the HashiCorp registry into a local hidden cache folder.
+
+**2. terraform plan**
+
+Command 2: Runs a simulation against your machine's filesystem. It outputs a logical roadmap detailing exactly what changes will take place—showing that it intends to add (+) exactly one local_file resource.
+
+**3. terraform apply**
+
+Command 3: Executes live modifications. Type yes when prompted. The internal engine compiles the declarative block, instructs the local provider plugin to process the task, and generates the terraform_success.txt file.
+
+### Summary & Core Takeaways
+
+- **Decoupled Architecture Works:** The core engine acts as a general manager, while independent plugins handle target ecosystem tasks.
+
+- **Declarative Consistency:** We only describe the target artifact endpoint configuration (local_file), leaving execution steps to the system loop.
+
+- **Next Steps:** Now that local environment workflows work smoothly, the same engine commands map cleanly to cloud providers like AWS, Azure, and Google Cloud by simply swapping out the provider block parameters.
+
+---
+
 ## Contributing
 
 Contributions are welcome! Please:
@@ -668,62 +743,6 @@ If you accidentally commit secrets:
 # Remove from Git history (use BFG Repo-Cleaner or git-filter-branch)
 git filter-branch --tree-filter 'rm -f terraform.tfstate' HEAD
 ```
-Mastering Infrastructure as Code: Terraform Installation & First Run
-
-Terraform is completely cross-platform and distributed as a single lightweight binary. To write code, we use VS Code, but to actually build infrastructure, we need the underlying CLI engine. Let’s look at the multiple ways we can install it depending on your operating system.
-A clean comparative grid showing the three major OS avenues.
-
-
-
-
-Manual Windows Installation:
-Step 1: File Deployment: Go to the official HashiCorp Developer platform. Download the Windows AMD64 ZIP, extract it, and place terraform.exe into a clean dedicated folder like C:\Terraform.
-
-Step 2: Environment Registration: Search your Windows toolbar for "Environment Variables". Edit the system Path variable and add C:\Terraform to the registry array.
-
-Step 3: Verification: Launch a completely fresh terminal window (PowerShell or Command Prompt) and test the execution path:
-terraform -version
-If you use a package manager like winget or Homebrew, the environment variables are handled for you automatically. If you choose the manual file method, remembering to append the binary folder location to your system's Environment Path is the single most critical step to prevent 'Command Not Found' faults.
-
-Testing Environment Configuration & VS Code Sync
-Once the terminal acknowledges our binary version, we initialize our project layout. We do this by launching VS Code, opening a blank project workspace directory, and adding a main.tf script file.
-
-Visual Code Block (Show this code block on the slide):
-Create a file named main.tf and paste the following clean provider test layout (this operates completely locally without requiring cloud account credentials or incurring costs):
-# 1. Define required provider engines
-terraform {
-  required_providers {
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.0"
-    }
-  }
-}
-
-# 2. Declare a local asset generation task
-resource "local_file" "presentation_test" {
-  filename = "${path.module}/terraform_success.txt"
-  content  = "Terraform CLI execution lifecycle tested successfully on 2026!"
-}
-
-Running the Test Lifecycle Workflow
-
-Visual Sequence Graphic: Open the integrated VS Code terminal and execute these 3 core sequential commands:
-
-1.terraform init:Command 1.Core scans your main.tf code block, maps the local provider block, and pulls down the required plugin binaries directly from the HashiCorp registry into a local hidden cash folder (.terraform/).
-
-2.terraform plan:Command 2.Runs a simulation against your machine's filesystem. It outputs a logical roadmap detailing exactly what changes will take place—showing that it intends to add (+) exactly 1 local text file asset.
-
-3.terraform apply:Command 3.Executes live modifications. Type yes when prompted. The internal engine compiles the declarative block, instructs the local provider plugin to process the task, and generates terraform_success.txt directly inside your active workspace sidebar window!
-
-
-Summary & Core Takeaways
-
-Decoupled Architecture Works: The core engine acts as a general manager, while independent plugins handle target ecosystem tasks.
-
-Declarative Consistency: We only describe the target artifact endpoint configuration (local_file), leaving execution steps to the system loop.
-
-Next Steps: Now that local environment workflows work smoothly, the same engine commands map cleanly to cloud providers like AWS, Azure, and Google Cloud by simply swapping out the provider block parameters.
 
 ---
 
