@@ -48,3 +48,11 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+# ==============================================================================
+# 6. AWS CREDENTIALS & PRIVATE KEYS
+# ==============================================================================
+
+.aws/
+*.pem
+*.key
+credentials
