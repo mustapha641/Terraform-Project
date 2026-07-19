@@ -1,0 +1,50 @@
+# ==============================================================================
+# 1. LOCAL WORKSPACE & ENGINE CACHES
+# ==============================================================================
+# Holds heavy provider plugins and module clones. Re-created via 'terraform init'.
+.terraform/
+
+# Hide transient lock information files generated during concurrent applies.
+.terraform.tfstate.lock.info
+
+# Ignore local system CLI overrides
+.terraformrc
+terraform.rc
+
+# ==============================================================================
+# 2. STATE METADATA & CLEAR-TEXT SECRETS (CRITICAL)
+# ==============================================================================
+# Direct state files contain passwords, tokens, and active asset mapping strings.
+*.tfstate
+*.tfstate.*
+
+# ==============================================================================
+# 3. ENVIRONMENT VARIABLE DEFINITIONS
+# ==============================================================================
+# Files ending in .tfvars carry the actual real-world values for your inputs.
+*.tfvars
+*.tfvars.json
+
+# Local environment secret sheets
+.env
+.env.*
+
+# ==============================================================================
+# 4. TRANSIENT PLANS & DEBUG LOGS
+# ==============================================================================
+# Ignore binary plan outputs which may cache private variables.
+*.tfplan
+*tfplan*
+
+# Automatically generated crash dump scripts
+crash.log
+crash.*.log
+
+# ==============================================================================
+# 5. USER SPECIFIC OVERRIDES
+# ==============================================================================
+# Ignore local structural testing modifications.
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
