@@ -44,7 +44,7 @@ Terraform is an open-source Infrastructure as Code (IaC) tool that enables engin
 
 Before tools like Terraform became popular, cloud infrastructure was often created manually through web consoles. For example, deploying a web application on a cloud platform might involve creating VM[...]
 
-Terraform by HashiCorp stands as the industry standard for open-source Infrastructure as Code. It provides engineers with the ability to define, provision, and iterate multi-cloud infrastructure safel[...]
+Terraform by HashiCorp stands as the industry standard for open-source Infrastructure as Code. It provides engineers with the ability to define, provision, and iterate multi-cloud infrastructure s[...]
 
 ### Terraform Core
 
@@ -62,7 +62,7 @@ Terraform Core communicates with cloud provider APIs through a plugin-based arch
 Terraform Core does not inherently know how an AWS EC2 instance, a Google Cloud storage bucket, or a Kubernetes cluster works. Instead, it relies on Providers.
 
 - **What they are:** Providers are executable binaries that act as translation bridges between Terraform Core and target platform APIs.
-- **How they work:** When Core decides it needs to create an AWS server, it asks the AWS Provider plugin via an RPC (Remote Procedure Call) interface. The provider translates that request into actual [...]
+- **How they work:** When Core decides it needs to create an AWS server, it asks the AWS Provider plugin via an RPC (Remote Procedure Call) interface. The provider translates that request into act[...]
 - **Extensibility:** Because of this decoupled layout, anyone can write a provider for any service that features a public API.
 
 **Common Providers:**
@@ -646,8 +646,7 @@ terraform state show aws_instance.web_server
 
 Terraform is completely cross-platform and distributed as a single lightweight binary. To write code, we use VS Code, but to actually build infrastructure, we need the underlying CLI engine.
 
-![Terraform Architecture](images/terraform-architecture5.png)
-
+![Terraform Architecture](images/Terraform-architecture5.png)
 
 ### Manual Windows Installation
 
@@ -667,7 +666,7 @@ Launch a completely fresh terminal window (PowerShell or Command Prompt) and tes
 terraform -version
 ```
 
-If you use a package manager like winget or Homebrew, the environment variables are handled for you automatically. If you choose the manual file method, remembering to append the binary folder locatio[...]
+If you use a package manager like winget or Homebrew, the environment variables are handled for you automatically. If you choose the manual file method, remembering to append the binary folder location to the Path variable is critical.
 
 ### Testing Environment Configuration
 
@@ -703,15 +702,13 @@ Command 1: Core scans your main.tf code block, maps the local provider block, an
 
 **2. terraform plan**
 
-Command 2: Runs a simulation against your machine's filesystem. It outputs a logical roadmap detailing exactly what changes will take place—showing that it intends to add (+) exactly one local_file [...]
+Command 2: Runs a simulation against your machine's filesystem. It outputs a logical roadmap detailing exactly what changes will take place—showing that it intends to add (+) exactly one local_file resource with the filename terraform_success.txt.
 
 **3. terraform apply**
 
-Command 3: Executes live modifications. Type yes when prompted. The internal engine compiles the declarative block, instructs the local provider plugin to process the task, and generates the terraform[...]
+Command 3: Executes live modifications. Type yes when prompted. The internal engine compiles the declarative block, instructs the local provider plugin to process the task, and generates the terraform.tfstate file along with the target artifact.
 
-
-![Terraform Architecture](images/terraform-architecture4.png)
-
+![Terraform Architecture](images/Terraform-architecture4.png)
 
 ### Summary & Core Takeaways
 
@@ -719,7 +716,7 @@ Command 3: Executes live modifications. Type yes when prompted. The internal eng
 
 - **Declarative Consistency:** We only describe the target artifact endpoint configuration (local_file), leaving execution steps to the system loop.
 
-- **Next Steps:** Now that local environment workflows work smoothly, the same engine commands map cleanly to cloud providers like AWS, Azure, and Google Cloud by simply swapping out the provider bloc[...]
+- **Next Steps:** Now that local environment workflows work smoothly, the same engine commands map cleanly to cloud providers like AWS, Azure, and Google Cloud by simply swapping out the provider block.
 
 ---
 
