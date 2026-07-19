@@ -36,15 +36,15 @@ Table of Contents
 
 ## Project Overview
 
-This repository contains Terraform configuration and supporting files to demonstrate and manage cloud infrastructure using IaC principles. The goal is to provide reusable examples and best-practice patterns for infrastructure management.
+This repository contains Terraform configuration and supporting files to demonstrate and manage cloud infrastructure using IaC principles. The goal is to provide reusable examples and best-practice pa[...]
 
 ## What is Terraform?
 
-Terraform is an open-source Infrastructure as Code (IaC) tool that enables engineers to provision, manage, and automate infrastructure using code rather than manual processes. Developed by HashiCorp, Terraform has become the industry standard for IaC.
+Terraform is an open-source Infrastructure as Code (IaC) tool that enables engineers to provision, manage, and automate infrastructure using code rather than manual processes. Developed by HashiCorp, [...]
 
-Before tools like Terraform became popular, cloud infrastructure was often created manually through web consoles. For example, deploying a web application on a cloud platform might involve creating VMs, databases, and networks through multiple manual steps.
+Before tools like Terraform became popular, cloud infrastructure was often created manually through web consoles. For example, deploying a web application on a cloud platform might involve creating VM[...]
 
-Terraform by HashiCorp stands as the industry standard for open-source Infrastructure as Code. It provides engineers with the ability to define, provision, and iterate multi-cloud infrastructure safely using code.
+Terraform by HashiCorp stands as the industry standard for open-source Infrastructure as Code. It provides engineers with the ability to define, provision, and iterate multi-cloud infrastructure safel[...]
 
 ### Terraform Core
 
@@ -62,7 +62,7 @@ Terraform Core communicates with cloud provider APIs through a plugin-based arch
 Terraform Core does not inherently know how an AWS EC2 instance, a Google Cloud storage bucket, or a Kubernetes cluster works. Instead, it relies on Providers.
 
 - **What they are:** Providers are executable binaries that act as translation bridges between Terraform Core and target platform APIs.
-- **How they work:** When Core decides it needs to create an AWS server, it asks the AWS Provider plugin via an RPC (Remote Procedure Call) interface. The provider translates that request into actual API calls.
+- **How they work:** When Core decides it needs to create an AWS server, it asks the AWS Provider plugin via an RPC (Remote Procedure Call) interface. The provider translates that request into actual [...]
 - **Extensibility:** Because of this decoupled layout, anyone can write a provider for any service that features a public API.
 
 **Common Providers:**
@@ -73,7 +73,7 @@ Terraform Core does not inherently know how an AWS EC2 instance, a Google Cloud 
 - `docker` - Docker containers
 - `postgresql` - PostgreSQL databases
 
-![Terraform Architecture](images/terraform-architecture.Png)
+![Terraform Architecture](images/terraform-architecture.png)
 
 ### Declarative Paradigm
 
@@ -93,7 +93,7 @@ If you deploy this code, Terraform calculates dynamically:
 - **On modification:** If you change the instance type from `t2.micro` to `t2.large`, you don't write a script to modify servers. Terraform handles the changes automatically.
 - **On deletion:** If you change `count = 5` to `count = 0`, Terraform destroys all 5 servers.
 
-Terraform is also self-healing: If an engineer manually logs into the AWS Web Console and deletes one of your three servers, your infrastructure has "drifted." The next time you run `terraform plan`, Terraform will detect this and show that it needs to recreate the missing server.
+Terraform is also self-healing: If an engineer manually logs into the AWS Web Console and deletes one of your three servers, your infrastructure has "drifted." The next time you run `terraform plan`, [...]
 
 In summary, Terraform is declarative because you describe what you want the final infrastructure to look like, not how to build it step by step.
 
@@ -664,7 +664,7 @@ Launch a completely fresh terminal window (PowerShell or Command Prompt) and tes
 terraform -version
 ```
 
-If you use a package manager like winget or Homebrew, the environment variables are handled for you automatically. If you choose the manual file method, remembering to append the binary folder location to your system PATH is essential.
+If you use a package manager like winget or Homebrew, the environment variables are handled for you automatically. If you choose the manual file method, remembering to append the binary folder locatio[...]
 
 ### Testing Environment Configuration
 
@@ -700,11 +700,11 @@ Command 1: Core scans your main.tf code block, maps the local provider block, an
 
 **2. terraform plan**
 
-Command 2: Runs a simulation against your machine's filesystem. It outputs a logical roadmap detailing exactly what changes will take place—showing that it intends to add (+) exactly one local_file resource.
+Command 2: Runs a simulation against your machine's filesystem. It outputs a logical roadmap detailing exactly what changes will take place—showing that it intends to add (+) exactly one local_file [...]
 
 **3. terraform apply**
 
-Command 3: Executes live modifications. Type yes when prompted. The internal engine compiles the declarative block, instructs the local provider plugin to process the task, and generates the terraform_success.txt file.
+Command 3: Executes live modifications. Type yes when prompted. The internal engine compiles the declarative block, instructs the local provider plugin to process the task, and generates the terraform[...]
 
 ### Summary & Core Takeaways
 
@@ -712,7 +712,7 @@ Command 3: Executes live modifications. Type yes when prompted. The internal eng
 
 - **Declarative Consistency:** We only describe the target artifact endpoint configuration (local_file), leaving execution steps to the system loop.
 
-- **Next Steps:** Now that local environment workflows work smoothly, the same engine commands map cleanly to cloud providers like AWS, Azure, and Google Cloud by simply swapping out the provider block parameters.
+- **Next Steps:** Now that local environment workflows work smoothly, the same engine commands map cleanly to cloud providers like AWS, Azure, and Google Cloud by simply swapping out the provider bloc[...]
 
 ---
 
