@@ -22,6 +22,8 @@ Table of Contents
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Quickstart](#quickstart)
+- [Installing AWS CLI on Windows (Chocolatey)](#install-aws-cli-on-windows-chocolatey)
+- [Deploy EC2 t3.micro with Terraform](#deploy-ec2-t3micro-with-terraform)
 - [Best Practices](#best-practices)
 - [Common Commands](#common-commands)
 - [Installation Guide](#installation-guide)
@@ -31,20 +33,21 @@ Table of Contents
   - [Running the Test Lifecycle Workflow](#running-the-test-lifecycle-workflow)
   - [Summary & Core Takeaways](#summary--core-takeaways)
 - [Contributing](#contributing)
+- [Security Reminders](#security-reminders)
 - [License](#license)
 - [Additional Resources](#additional-resources)
 
 ## Project Overview
 
-This repository contains Terraform configuration and supporting files to demonstrate and manage cloud infrastructure using IaC principles. The goal is to provide reusable examples and best-practice pa[...]
+This repository contains Terraform configuration and supporting files to demonstrate and manage cloud infrastructure using IaC principles. The goal is to provide reusable examples and best-practice patterns for provisioning resources in cloud providers like AWS, Azure, and GCP.
 
 ## What is Terraform?
 
-Terraform is an open-source Infrastructure as Code (IaC) tool that enables engineers to provision, manage, and automate infrastructure using code rather than manual processes. Developed by HashiCorp, [...]
+Terraform is an open-source Infrastructure as Code (IaC) tool that enables engineers to provision, manage, and automate infrastructure using code rather than manual processes. Developed by HashiCorp, Terraform allows you to define resources declaratively and apply changes consistently across environments.
 
-Before tools like Terraform became popular, cloud infrastructure was often created manually through web consoles. For example, deploying a web application on a cloud platform might involve creating VM[...]
+Before tools like Terraform became popular, cloud infrastructure was often created manually through web consoles. For example, deploying a web application on a cloud platform might involve creating VMs, configuring networking, and wiring up DNS by hand—tasks that are error-prone and hard to reproduce.
 
-Terraform by HashiCorp stands as the industry standard for open-source Infrastructure as Code. It provides engineers with the ability to define, provision, and iterate multi-cloud infrastructure s[...]
+Terraform by HashiCorp stands as the industry standard for open-source Infrastructure as Code. It provides engineers with the ability to define, provision, and iterate multi-cloud infrastructure safely and predictably.
 
 ### Terraform Core
 
@@ -62,7 +65,7 @@ Terraform Core communicates with cloud provider APIs through a plugin-based arch
 Terraform Core does not inherently know how an AWS EC2 instance, a Google Cloud storage bucket, or a Kubernetes cluster works. Instead, it relies on Providers.
 
 - **What they are:** Providers are executable binaries that act as translation bridges between Terraform Core and target platform APIs.
-- **How they work:** When Core decides it needs to create an AWS server, it asks the AWS Provider plugin via an RPC (Remote Procedure Call) interface. The provider translates that request into act[...]
+- **How they work:** When Core decides it needs to create an AWS server, it asks the AWS Provider plugin via an RPC (Remote Procedure Call) interface. The provider translates that request into actions against the provider's APIs.
 - **Extensibility:** Because of this decoupled layout, anyone can write a provider for any service that features a public API.
 
 **Common Providers:**
@@ -93,7 +96,7 @@ If you deploy this code, Terraform calculates dynamically:
 - **On modification:** If you change the instance type from `t2.micro` to `t2.large`, you don't write a script to modify servers. Terraform handles the changes automatically.
 - **On deletion:** If you change `count = 5` to `count = 0`, Terraform destroys all 5 servers.
 
-Terraform is also self-healing: If an engineer manually logs into the AWS Web Console and deletes one of your three servers, your infrastructure has "drifted." The next time you run `terraform plan`, [...]
+Terraform is also self-healing: If an engineer manually logs into the AWS Web Console and deletes one of your three servers, your infrastructure has "drifted." The next time you run `terraform plan`, Terraform will detect the difference and show the actions required to reconcile.
 
 In summary, Terraform is declarative because you describe what you want the final infrastructure to look like, not how to build it step by step.
 
@@ -392,7 +395,7 @@ jobs:
           terraform apply -auto-approve
 ```
 
-#### 3. **Implement Branch Protection Rules**
+#### 3. **Implement Branch Protection Rules**n
 
 Prevent direct pushes to main branches:
 
@@ -599,6 +602,184 @@ terraform destroy
 
 ---
 
+## Installing AWS CLI on Windows (Chocolatey)
+
+These instructions show how to install Chocolatey and the AWS CLI on Windows, configure credentials, and verify the installation.
+
+> Prerequisite: You must run PowerShell as Administrator for the Chocolatey installation step.
+
+1) Install (or verify) Chocolatey
+
+Open an elevated PowerShell (run as Administrator) and run:
+
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+```
+
+After the script completes, close and re-open the terminal.
+
+2) Install AWS CLI via Chocolatey
+
+In an elevated PowerShell or administrative command prompt run:
+
+```powershell
+choco install awscli -y
+```
+
+3) Verify the AWS CLI installation
+
+```powershell
+aws --version
+```
+
+You should see output like `aws-cli/2.x.x Python/3.x Windows/10 botocore/2.x.x`.
+
+4) Configure AWS credentials
+
+Create an IAM user in the AWS Console with programmatic access (Access key ID and Secret access key), then configure locally:
+
+```powershell
+aws configure
+```
+
+Provide:
+- AWS Access Key ID
+- AWS Secret Access Key
+- Default region name (e.g., us-east-1)
+- Default output format (e.g., json)
+
+Tip: For CI/CD, store credentials in GitHub Secrets rather than local files.
+
+Security note: Never commit your AWS credentials or `~/.aws/credentials` file to version control.
+
+---
+
+## Deploy EC2 t3.micro with Terraform
+
+This section provides a minimal, safe example for provisioning an EC2 instance of type `t3.micro` using Terraform. It assumes you have the AWS CLI configured (see previous section) or environment variables set (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION).
+
+Important notes before you begin:
+- t3.micro may incur charges. Destroy resources when you don't need them.
+- Use a region that supports `t3.micro` and choose a region-appropriate AMI.
+- Restrict SSH access (do not leave 0.0.0.0/0 open in production).
+
+Example Terraform files (minimal example):
+
+1) provider and data source to find a recent Amazon Linux 2 AMI (main.tf)
+
+```hcl
+provider "aws" {
+  region = var.aws_region
+}
+
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
+resource "aws_key_pair" "deployer" {
+  key_name   = "deployer-key"
+  public_key = file(var.public_key_path)
+}
+
+resource "aws_security_group" "ssh" {
+  name_prefix = "allow_ssh"
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.ssh_cidr]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "web" {
+  ami                    = data.aws_ami.amazon_linux.id
+  instance_type          = "t3.micro"
+  key_name               = aws_key_pair.deployer.key_name
+  vpc_security_group_ids = [aws_security_group.ssh.id]
+
+  tags = {
+    Name = "terraform-ec2-t3micro"
+  }
+}
+```
+
+2) variables file (variables.tf)
+
+```hcl
+variable "aws_region" {
+  type    = string
+  default = "us-east-1"
+}
+
+variable "public_key_path" {
+  type    = string
+  default = "~/.ssh/id_rsa.pub"
+}
+
+variable "ssh_cidr" {
+  type    = string
+  default = "0.0.0.0/0" # Change to restrict access
+}
+```
+
+3) outputs (outputs.tf)
+
+```hcl
+output "instance_id" {
+  value = aws_instance.web.id
+}
+
+output "instance_public_ip" {
+  value = aws_instance.web.public_ip
+}
+```
+
+Workflow (commands)
+
+```bash
+# 1. Make sure AWS credentials are configured (aws configure) or env vars are set
+# 2. Initialize Terraform
+terraform init
+
+# 3. Validate
+terraform validate
+
+# 4. Preview
+terraform plan -out=plan.tfplan
+
+# 5. Apply
+terraform apply "plan.tfplan"
+
+# 6. When finished, destroy to avoid ongoing charges
+terraform destroy -auto-approve
+```
+
+Security & cleanup
+- Replace `ssh_cidr` with your office/home IP to avoid exposing SSH to the world.
+- Remove the EC2 instance and related resources when finished: `terraform destroy`.
+
+Troubleshooting
+- If the AMI lookup fails for your region, adjust the data "aws_ami" filter to match a valid AMI name in your region, or hardcode a known AMI ID for that region.
+- If `t3.micro` is not available in your selected region, pick another instance size like `t2.micro`.
+
+---
+
 ## Best Practices
 
 1. **Always use version control** - Track all infrastructure changes
@@ -666,7 +847,7 @@ Launch a completely fresh terminal window (PowerShell or Command Prompt) and tes
 terraform -version
 ```
 
-If you use a package manager like winget or Homebrew, the environment variables are handled for you automatically. If you choose the manual file method, remembering to append the binary folder location to the Path variable is critical.
+If you use a package manager like winget or Homebrew, the environment variables are handled for you automatically. If you choose the manual file method, remembering to append the binary folder locatio[...]
 
 ### Testing Environment Configuration
 
@@ -702,11 +883,11 @@ Command 1: Core scans your main.tf code block, maps the local provider block, an
 
 **2. terraform plan**
 
-Command 2: Runs a simulation against your machine's filesystem. It outputs a logical roadmap detailing exactly what changes will take place—showing that it intends to add (+) exactly one local_file resource with the filename terraform_success.txt.
+Command 2: Runs a simulation against your machine's filesystem. It outputs a logical roadmap detailing exactly what changes will take place—showing that it intends to add (+) exactly one local_file [...]
 
 **3. terraform apply**
 
-Command 3: Executes live modifications. Type yes when prompted. The internal engine compiles the declarative block, instructs the local provider plugin to process the task, and generates the terraform.tfstate file along with the target artifact.
+Command 3: Executes live modifications. Type yes when prompted. The internal engine compiles the declarative block, instructs the local provider plugin to process the task, and generates the terrafor[...] 
 
 ![Terraform Architecture](images/Terraform-architecture4.png)
 
@@ -716,7 +897,7 @@ Command 3: Executes live modifications. Type yes when prompted. The internal eng
 
 - **Declarative Consistency:** We only describe the target artifact endpoint configuration (local_file), leaving execution steps to the system loop.
 
-- **Next Steps:** Now that local environment workflows work smoothly, the same engine commands map cleanly to cloud providers like AWS, Azure, and Google Cloud by simply swapping out the provider block.
+- **Next Steps:** Now that local environment workflows work smoothly, the same engine commands map cleanly to cloud providers like AWS, Azure, and Google Cloud by simply swapping out the provider bloc[...] 
 
 ---
 
