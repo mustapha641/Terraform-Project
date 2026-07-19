@@ -634,6 +634,10 @@ choco install awscli -y
 aws --version
 ```
 
+
+
+![Terraform Architecture](images/terraform-architecture6.png)
+
 You should see output like `aws-cli/2.x.x Python/3.x Windows/10 botocore/2.x.x`.
 
 4) Configure AWS credentials
