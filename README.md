@@ -73,7 +73,7 @@ Terraform Core does not inherently know how an AWS EC2 instance, a Google Cloud 
 - `docker` - Docker containers
 - `postgresql` - PostgreSQL databases
 
-![Terraform Architecture](images/terraform-architecture.png)
+![Terraform Architecture](images/terraform-architecture.Png.png)
 
 ### Declarative Paradigm
 
